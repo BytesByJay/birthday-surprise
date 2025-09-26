@@ -189,55 +189,87 @@ function onWindowResize() {
 
 // ===== SCROLL ANIMATIONS =====
 function setupScrollAnimations() {
-    if (typeof gsap === 'undefined') return;
+    if (typeof gsap === 'undefined') {
+        // Fallback for no GSAP - use Intersection Observer for smooth animations
+        setupIntersectionObserver();
+        return;
+    }
     
-    // Fade in elements on scroll
+    // Smooth fade in elements on scroll - less jarring
     const fadeElements = document.querySelectorAll('.fade-in');
-    fadeElements.forEach(element => {
+    fadeElements.forEach((element, index) => {
         gsap.fromTo(element, 
-            { opacity: 0, y: 50 },
+            { opacity: 0, y: 20 }, // Reduced movement for smoother effect
             { 
                 opacity: 1, 
                 y: 0, 
-                duration: 1,
+                duration: 0.6, // Faster, smoother
+                ease: "power2.out",
                 scrollTrigger: {
                     trigger: element,
-                    start: "top 80%",
-                    end: "bottom 20%",
-                    toggleActions: "play none none none"
+                    start: "top 85%", // Start animation earlier
+                    end: "bottom 15%",
+                    toggleActions: "play none none reverse", // Allow reverse
+                    once: false // Allow replay
                 }
             }
         );
     });
     
-    // Animate message cards
+    // Smooth animate message cards
     const messageCards = document.querySelectorAll('.message-card');
     messageCards.forEach((card, index) => {
         gsap.fromTo(card,
-            { opacity: 0, y: 100 },
+            { opacity: 0, y: 30 }, // Less dramatic movement
             {
                 opacity: 1,
                 y: 0,
-                duration: 0.8,
-                delay: index * 0.2,
+                duration: 0.7,
+                delay: index * 0.1, // Less staggered delay
+                ease: "power2.out",
                 scrollTrigger: {
                     trigger: card,
-                    start: "top 80%",
-                    toggleActions: "play none none none"
+                    start: "top 85%",
+                    toggleActions: "play none none reverse"
                 }
             }
         );
     });
     
-    // Parallax effect for background elements
+    // Gentle parallax effect for background elements
     gsap.to('.floating-elements', {
-        y: -100,
+        y: -50, // Less movement
         scrollTrigger: {
             trigger: 'body',
             start: 'top top',
             end: 'bottom bottom',
-            scrub: true
+            scrub: 1 // Smoother scrub
         }
+    });
+}
+
+// Fallback smooth scroll animations using Intersection Observer
+function setupIntersectionObserver() {
+    const observerOptions = {
+        threshold: 0.1,
+        rootMargin: '0px 0px -50px 0px'
+    };
+    
+    const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                entry.target.style.transition = 'all 0.6s ease-out';
+                entry.target.style.opacity = '1';
+                entry.target.style.transform = 'translateY(0)';
+            }
+        });
+    }, observerOptions);
+    
+    // Observe elements that need animation
+    document.querySelectorAll('.fade-in, .message-card').forEach(el => {
+        el.style.opacity = '0';
+        el.style.transform = 'translateY(20px)';
+        observer.observe(el);
     });
 }
 
@@ -250,15 +282,15 @@ function setupGallery() {
 function loadGalleryPhotos() {
     // Using Unsplash for placeholder family photos
     const photoUrls = [
-        'https://images.unsplash.com/photo-1511895426328-dc8714efa8d6?w=400&h=300&fit=crop&crop=faces',
+        'https://cdn.pixabay.com/photo/2023/08/23/12/57/young-8208513_960_720.jpg',
         'https://images.unsplash.com/photo-1609220136736-443140cffec6?w=400&h=300&fit=crop&crop=faces',
+        'https://cdn.pixabay.com/photo/2016/11/29/07/35/beach-1868132_960_720.jpg',
+        'https://images.unsplash.com/photo-1601933973783-43cf8a7d4c5f?w=400&h=300&fit=crop&crop=faces',
+        'https://images.unsplash.com/photo-1608096299210-db7e38487075?w=400&h=300&fit=crop&crop=faces',
+        'https://cdn.pixabay.com/photo/2024/01/07/11/17/welsh-corgi-8492879_960_720.jpg',
+        'https://images.unsplash.com/photo-1560707303-4e980ce876ad?w=400&h=300&fit=crop&crop=faces',
         'https://images.unsplash.com/photo-1578662996442-48f60103fc96?w=400&h=300&fit=crop&crop=faces',
         'https://images.unsplash.com/photo-1559827260-dc66d52bef19?w=400&h=300&fit=crop&crop=faces',
-        'https://images.unsplash.com/photo-1608096299210-db7e38487075?w=400&h=300&fit=crop&crop=faces',
-        'https://images.unsplash.com/photo-1576091160399-112ba8d25d1f?w=400&h=300&fit=crop&crop=faces',
-        'https://images.unsplash.com/photo-1560707303-4e980ce876ad?w=400&h=300&fit=crop&crop=faces',
-        'https://images.unsplash.com/photo-1601933973783-43cf8a7d4c5f?w=400&h=300&fit=crop&crop=faces',
-        'https://images.unsplash.com/photo-1546062446-dd4ade1eb56d?w=400&h=300&fit=crop&crop=faces'
     ];
     
     const captions = [
@@ -454,16 +486,23 @@ function setupCountdown() {
 function setupSurpriseAnimation() {
     const surpriseButton = document.getElementById('surpriseButton');
     const surpriseReveal = document.getElementById('surpriseReveal');
+    const videoSurprise = document.getElementById('videoSurprise');
+    const surpriseMessage = document.getElementById('surpriseMessage');
+    const surpriseVideo = document.getElementById('surpriseVideo');
+    const playVideoBtn = document.getElementById('playVideoBtn');
+    const showMessageBtn = document.getElementById('showMessageBtn');
     
+    // Main surprise reveal
     surpriseButton.addEventListener('click', function() {
-        // Hide button
+        // Hide button with smooth animation
+        this.style.transition = 'all 0.3s ease-out';
         this.style.transform = 'scale(0)';
         this.style.opacity = '0';
         
         setTimeout(() => {
             this.style.display = 'none';
             
-            // Show surprise
+            // Show surprise container
             surpriseReveal.classList.add('active');
             
             // Trigger confetti
@@ -472,8 +511,90 @@ function setupSurpriseAnimation() {
             // Animate balloons
             animateBalloons();
             
+            // Check if video exists and show appropriate surprise
+            setTimeout(() => {
+                checkAndShowSurprise();
+            }, 1000);
+            
         }, 300);
     });
+    
+    // Video control handlers
+    if (playVideoBtn) {
+        playVideoBtn.addEventListener('click', function() {
+            showVideoSurprise();
+        });
+    }
+    
+    if (showMessageBtn) {
+        showMessageBtn.addEventListener('click', function() {
+            showMessageSurprise();
+        });
+    }
+    
+    // Video event handlers
+    if (surpriseVideo) {
+        surpriseVideo.addEventListener('loadedmetadata', function() {
+            console.log('🎥 Video loaded successfully!');
+        });
+        
+        surpriseVideo.addEventListener('error', function(e) {
+            console.log('🚨 Video failed to load, showing message instead');
+            showMessageSurprise();
+        });
+    }
+}
+
+function checkAndShowSurprise() {
+    const videoSurprise = document.getElementById('videoSurprise');
+    const surpriseVideo = document.getElementById('surpriseVideo');
+    
+    // Check if video file exists by trying to load it
+    if (surpriseVideo) {
+        const videoSrc = surpriseVideo.querySelector('source[type="video/mp4"]').src;
+        
+        fetch(videoSrc, { method: 'HEAD' })
+            .then(response => {
+                if (response.ok) {
+                    showVideoSurprise();
+                } else {
+                    showMessageSurprise();
+                }
+            })
+            .catch(() => {
+                showMessageSurprise();
+            });
+    } else {
+        showMessageSurprise();
+    }
+}
+
+function showVideoSurprise() {
+    const videoSurprise = document.getElementById('videoSurprise');
+    const surpriseMessage = document.getElementById('surpriseMessage');
+    
+    if (videoSurprise) {
+        videoSurprise.classList.add('show');
+        // Hide message initially when showing video
+        surpriseMessage.style.display = 'none';
+        
+        console.log('🎥 Video surprise activated!');
+    }
+}
+
+function showMessageSurprise() {
+    const surpriseMessage = document.getElementById('surpriseMessage');
+    const videoSurprise = document.getElementById('videoSurprise');
+    
+    if (surpriseMessage) {
+        // Hide video if it was shown
+        if (videoSurprise) {
+            videoSurprise.style.display = 'none';
+        }
+        
+        surpriseMessage.classList.add('show');
+        console.log('💌 Message surprise activated!');
+    }
 }
 
 function animateBalloons() {

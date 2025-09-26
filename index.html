@@ -193,7 +193,22 @@
                             <div class="balloon balloon-4"></div>
                             <div class="balloon balloon-5"></div>
                         </div>
-                        <div class="surprise-message">
+                        
+                        <!-- Video Surprise Container -->
+                        <div class="video-surprise" id="videoSurprise">
+                            <video id="surpriseVideo" controls preload="metadata" poster="">
+                                <source src="birthday-video.mp4" type="video/mp4">
+                                <source src="birthday-video.webm" type="video/webm">
+                                <p>Your browser doesn't support video. Here's a <a href="birthday-video.mp4">link to the video</a> instead.</p>
+                            </video>
+                            <div class="video-controls">
+                                <button class="video-btn" id="playVideoBtn">▶️ Play Special Message</button>
+                                <button class="video-btn" id="showMessageBtn">💌 Show Text Message</button>
+                            </div>
+                        </div>
+                        
+                        <!-- Text Message (fallback or additional) -->
+                        <div class="surprise-message" id="surpriseMessage">
                             <h3>🎉 Surprise! 🎉</h3>
                             <p>
                                 This website was made with so much love just for you! 
