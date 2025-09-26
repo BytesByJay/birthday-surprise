@@ -278,6 +278,7 @@ function loadGalleryPhotos() {
     }));
     
     renderGalleryPage();
+    console.log(`🖼️  Gallery loaded: ${galleryPhotos.length} photos, showing ${Math.min(photosPerPage, galleryPhotos.length)} on first page`);
 }
 
 function renderGalleryPage() {
@@ -295,12 +296,16 @@ function renderGalleryPage() {
     
     // Update navigation buttons
     updateGalleryButtons();
+    
+    // Animate the newly added gallery items
+    setTimeout(() => {
+        animateGalleryItems();
+    }, 100);
 }
 
 function createGalleryItem(photo, index) {
     const item = document.createElement('div');
-    item.className = 'gallery-item fade-in';
-    item.style.animationDelay = `${index * 0.1}s`;
+    item.className = 'gallery-item';
     
     item.innerHTML = `
         <img src="${photo.url}" alt="${photo.caption}" loading="lazy">
@@ -346,20 +351,38 @@ function updateGalleryButtons() {
     nextBtn.disabled = currentGalleryPage >= maxPages - 1;
 }
 
-function animateGalleryTransition() {
-    if (typeof gsap === 'undefined') return;
+function animateGalleryItems() {
+    if (typeof gsap === 'undefined') {
+        // Fallback for when GSAP is not available
+        const galleryItems = document.querySelectorAll('.gallery-item');
+        galleryItems.forEach((item, index) => {
+            item.style.opacity = '0';
+            item.style.transform = 'scale(0.8) translateY(20px)';
+            setTimeout(() => {
+                item.style.transition = 'all 0.6s ease-out';
+                item.style.opacity = '1';
+                item.style.transform = 'scale(1) translateY(0)';
+            }, index * 100);
+        });
+        return;
+    }
     
     const galleryItems = document.querySelectorAll('.gallery-item');
     gsap.fromTo(galleryItems, 
-        { opacity: 0, scale: 0.8 },
+        { opacity: 0, scale: 0.8, y: 20 },
         { 
             opacity: 1, 
             scale: 1, 
+            y: 0,
             duration: 0.6,
             stagger: 0.1,
             ease: "back.out(1.7)"
         }
     );
+}
+
+function animateGalleryTransition() {
+    animateGalleryItems();
 }
 
 // ===== COUNTDOWN TIMER =====
@@ -540,11 +563,24 @@ function createConfettiPiece(container, color) {
 function setupMusicToggle() {
     const musicToggle = document.getElementById('musicToggle');
     
-    // Create audio element (you can replace with actual audio file)
+    // Create audio element
     audio = new Audio();
-    audio.src = './birthday-song.mp3'; // Replace with actual audio file
+    audio.src = './birthday-song.mp3';
     audio.loop = true;
     audio.volume = 0.3;
+    
+    // Check if audio file exists and is valid
+    audio.addEventListener('error', function(e) {
+        console.log('Audio file not found or invalid');
+        musicToggle.style.opacity = '0.5';
+        musicToggle.title = 'Add birthday-song.mp3 to enable music';
+    });
+    
+    audio.addEventListener('canplaythrough', function() {
+        console.log('🎵 Audio file loaded successfully!');
+        musicToggle.style.opacity = '1';
+        musicToggle.title = 'Toggle background music';
+    });
     
     musicToggle.addEventListener('click', function() {
         if (isAudioPlaying) {
@@ -581,22 +617,38 @@ function showMusicMessage() {
         top: 50%;
         left: 50%;
         transform: translate(-50%, -50%);
-        background: rgba(0,0,0,0.8);
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
         color: white;
-        padding: 1rem 2rem;
-        border-radius: 10px;
+        padding: 2rem 3rem;
+        border-radius: 20px;
         z-index: 10000;
         text-align: center;
+        box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+        backdrop-filter: blur(20px);
+        border: 1px solid rgba(255,255,255,0.2);
+        max-width: 400px;
     `;
     message.innerHTML = `
-        <p>🎵 Add your favorite birthday song!</p>
-        <small>Replace the audio source in script.js</small>
+        <h3 style="margin-bottom: 1rem; font-size: 1.5rem;">🎵 Add Birthday Music!</h3>
+        <p style="margin-bottom: 1rem;">Add a file named <strong>birthday-song.mp3</strong> to your website folder.</p>
+        <p style="font-size: 0.9rem; opacity: 0.9;">Check the MUSIC_SETUP.md file for easy instructions!</p>
+        <button onclick="this.parentElement.remove()" style="
+            background: rgba(255,255,255,0.2);
+            border: none;
+            color: white;
+            padding: 0.5rem 1rem;
+            border-radius: 15px;
+            margin-top: 1rem;
+            cursor: pointer;
+        ">Got it!</button>
     `;
     document.body.appendChild(message);
     
     setTimeout(() => {
-        message.remove();
-    }, 3000);
+        if (message.parentElement) {
+            message.remove();
+        }
+    }, 8000);
 }
 
 // ===== NAVIGATION SMOOTH SCROLL =====

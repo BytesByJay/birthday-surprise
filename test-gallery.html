@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gallery Test</title>
+    <style>
+        body { 
+            font-family: Arial, sans-serif; 
+            margin: 20px; 
+            background: #f0f0f0; 
+        }
+        .test-section {
+            background: white;
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+        .gallery-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin: 20px 0;
+        }
+        .gallery-item {
+            position: relative;
+            border-radius: 10px;
+            overflow: hidden;
+            aspect-ratio: 4/3;
+            background: #ddd;
+            opacity: 1;
+            transform: scale(1);
+        }
+        .gallery-item img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        button {
+            background: #667eea;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            margin: 5px;
+        }
+        button:hover {
+            background: #5a67d8;
+        }
+        .status {
+            background: #e6fffa;
+            padding: 10px;
+            border-radius: 5px;
+            margin: 10px 0;
+        }
+    </style>
+</head>
+<body>
+    <h1>🧪 Gallery Visibility Test</h1>
+    
+    <div class="test-section">
+        <h2>Gallery Status</h2>
+        <div id="status" class="status">Loading...</div>
+        <button onclick="testGallery()">Test Gallery Load</button>
+        <button onclick="clearGallery()">Clear Gallery</button>
+    </div>
+
+    <div class="test-section">
+        <h2>Photo Gallery</h2>
+        <div class="gallery-grid" id="testGallery">
+            <!-- Photos will appear here -->
+        </div>
+    </div>
+
+    <script>
+        function updateStatus(message) {
+            document.getElementById('status').innerHTML = message;
+            console.log(message);
+        }
+
+        function testGallery() {
+            const galleryGrid = document.getElementById('testGallery');
+            
+            // Test photos (same as in main website)
+            const testPhotos = [
+                {
+                    url: 'https://images.unsplash.com/photo-1511895426328-dc8714efa8d6?w=400&h=300&fit=crop&crop=faces',
+                    caption: 'Family gathering at Christmas'
+                },
+                {
+                    url: 'https://images.unsplash.com/photo-1609220136736-443140cffec6?w=400&h=300&fit=crop&crop=faces',
+                    caption: 'Birthday celebration last year'
+                },
+                {
+                    url: 'https://images.unsplash.com/photo-1578662996442-48f60103fc96?w=400&h=300&fit=crop&crop=faces',
+                    caption: 'Summer vacation memories'
+                }
+            ];
+
+            updateStatus('🔄 Loading gallery photos...');
+            
+            // Clear existing content
+            galleryGrid.innerHTML = '';
+            
+            // Add photos
+            testPhotos.forEach((photo, index) => {
+                const item = document.createElement('div');
+                item.className = 'gallery-item';
+                item.innerHTML = `
+                    <img src="${photo.url}" alt="${photo.caption}" loading="lazy" 
+                         onload="console.log('✅ Photo ${index + 1} loaded')"
+                         onerror="console.log('❌ Photo ${index + 1} failed to load')">
+                `;
+                galleryGrid.appendChild(item);
+            });
+
+            updateStatus(`✅ Gallery loaded with ${testPhotos.length} photos. Photos should be visible immediately!`);
+        }
+
+        function clearGallery() {
+            document.getElementById('testGallery').innerHTML = '';
+            updateStatus('🗑️ Gallery cleared');
+        }
+
+        // Auto-test on page load
+        window.addEventListener('load', () => {
+            setTimeout(testGallery, 1000);
+        });
+    </script>
+</body>
+</html>

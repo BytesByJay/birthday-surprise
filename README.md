@@ -85,10 +85,11 @@ Edit the HTML in `index.html` starting around line 127 to change the birthday me
 </div>
 ```
 
-### 5. Add Background Music
+### 5. Customize Background Music (Optional)
+A sample audio file is already included! To use your own:
 1. Get a birthday song (MP3 format, under 5MB)
-2. Replace the placeholder `birthday-song.mp3` file with your actual audio file
-3. Keep the same filename or update the path in `script.js` line 545
+2. Replace the current `birthday-song.mp3` file with your preferred audio
+3. Keep the same filename for automatic detection
 
 ### 6. Customize Colors
 Edit `styles.css` to change the color scheme. The main colors are defined in CSS variables starting at line 22:

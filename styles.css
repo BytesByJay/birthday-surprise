@@ -468,6 +468,8 @@ body {
     box-shadow: var(--shadow-soft);
     transition: var(--transition-smooth);
     aspect-ratio: 4/3;
+    opacity: 1;
+    transform: scale(1);
 }
 
 .gallery-item:hover {
