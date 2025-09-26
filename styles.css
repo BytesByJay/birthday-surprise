@@ -737,6 +737,33 @@ body {
         --section-padding: 3rem 0;
     }
     
+    /* Reduce background animations on mobile for better readability */
+    .floating-elements::before,
+    .floating-elements::after {
+        opacity: 0.3;
+        animation-duration: 10s; /* Slower animation */
+    }
+    
+    .floating-elements::before {
+        width: 40px;
+        height: 40px;
+        background: rgba(255, 255, 255, 0.05);
+    }
+    
+    .floating-elements::after {
+        width: 60px;
+        height: 60px;
+        background: rgba(255, 255, 255, 0.03);
+    }
+    
+    .gradient-orbs::before {
+        width: 150px;
+        height: 150px;
+        opacity: 0.15; /* Much more subtle */
+        filter: blur(80px);
+        animation-duration: 6s; /* Slower pulse */
+    }
+    
     .nav-container {
         gap: 1rem;
     }
@@ -829,6 +856,18 @@ body {
     
     .section-subtitle {
         font-size: 1rem;
+    }
+    
+    /* Almost disable background animations on very small screens */
+    .floating-elements::before,
+    .floating-elements::after {
+        opacity: 0.1;
+        animation-duration: 15s;
+    }
+    
+    .gradient-orbs::before {
+        opacity: 0.1;
+        animation-duration: 8s;
     }
 }
 

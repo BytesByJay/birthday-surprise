@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>📱 Mobile Animation Test</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            min-height: 100vh;
+        }
+        .test-section {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 15px;
+            backdrop-filter: blur(10px);
+        }
+        .device-info {
+            background: rgba(255, 255, 255, 0.2);
+            padding: 15px;
+            border-radius: 10px;
+            margin: 10px 0;
+        }
+        button {
+            background: rgba(255, 255, 255, 0.2);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            color: white;
+            padding: 10px 20px;
+            border-radius: 25px;
+            cursor: pointer;
+            margin: 5px;
+        }
+        button:hover {
+            background: rgba(255, 255, 255, 0.3);
+        }
+        .sparkle-zone {
+            height: 200px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 20px 0;
+            position: relative;
+            border: 2px dashed rgba(255, 255, 255, 0.3);
+        }
+        .status {
+            font-weight: bold;
+            padding: 10px;
+            border-radius: 5px;
+            margin: 10px 0;
+        }
+        .mobile { background: rgba(255, 165, 0, 0.3); }
+        .desktop { background: rgba(0, 255, 0, 0.3); }
+        .confetti {
+            position: fixed;
+            width: 8px;
+            height: 8px;
+            pointer-events: none;
+            z-index: 1000;
+            animation: confetti-fall 3s linear infinite;
+        }
+        @keyframes confetti-fall {
+            to { transform: translateY(100vh) rotate(360deg); }
+        }
+        .floating-element {
+            position: fixed;
+            width: 20px;
+            height: 20px;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 50%;
+            pointer-events: none;
+            animation: float-mobile 8s ease-in-out infinite;
+        }
+        @keyframes float-mobile {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-20px); }
+        }
+    </style>
+</head>
+<body>
+    <h1>📱 Mobile Animation Test</h1>
+    
+    <div class="test-section">
+        <h2>Device Detection</h2>
+        <div id="deviceInfo" class="device-info">Checking device...</div>
+    </div>
+
+    <div class="test-section">
+        <h2>Animation Status</h2>
+        <div id="animationStatus" class="status">Testing...</div>
+        <button onclick="testCursorSparkles()">Test Cursor Effects</button>
+        <button onclick="testConfetti()">Test Confetti</button>
+        <button onclick="testFloatingElements()">Test Background Elements</button>
+    </div>
+
+    <div class="test-section">
+        <h2>Interactive Zone</h2>
+        <div class="sparkle-zone" id="sparkleZone" onmousemove="handleMouseMove(event)">
+            Move your mouse/finger here to test cursor effects
+        </div>
+        <p><small>On mobile: No sparkles should appear. On desktop: Minimal sparkles.</small></p>
+    </div>
+
+    <script>
+        let sparkleCount = 0;
+        let confettiCount = 0;
+
+        // Device detection functions (same as main website)
+        function isMobileDevice() {
+            return /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) 
+                   || (typeof window.orientation !== 'undefined') 
+                   || (window.innerWidth <= 768);
+        }
+
+        function isTouchDevice() {
+            return 'ontouchstart' in window || navigator.maxTouchPoints > 0 || navigator.msMaxTouchPoints > 0;
+        }
+
+        function updateDeviceInfo() {
+            const deviceInfo = document.getElementById('deviceInfo');
+            const animationStatus = document.getElementById('animationStatus');
+            
+            const isMobile = isMobileDevice();
+            const isTouch = isTouchDevice();
+            
+            deviceInfo.innerHTML = `
+                <strong>Device Type:</strong> ${isMobile ? 'Mobile' : 'Desktop'}<br>
+                <strong>Touch Device:</strong> ${isTouch ? 'Yes' : 'No'}<br>
+                <strong>Screen Width:</strong> ${window.innerWidth}px<br>
+                <strong>User Agent:</strong> ${navigator.userAgent.substring(0, 50)}...
+            `;
+            
+            if (isMobile || isTouch) {
+                animationStatus.className = 'status mobile';
+                animationStatus.innerHTML = '📱 Mobile detected - Animations will be REDUCED for better performance';
+            } else {
+                animationStatus.className = 'status desktop';
+                animationStatus.innerHTML = '🖥️ Desktop detected - Full animations enabled';
+            }
+        }
+
+        function handleMouseMove(event) {
+            // Only create sparkles on non-mobile devices
+            if (!isMobileDevice() && !isTouchDevice()) {
+                if (Math.random() > 0.90) { // Higher chance for testing
+                    createSparkle(event.clientX, event.clientY);
+                }
+            }
+        }
+
+        function createSparkle(x, y) {
+            sparkleCount++;
+            const sparkle = document.createElement('div');
+            sparkle.style.cssText = `
+                position: fixed;
+                left: ${x}px;
+                top: ${y}px;
+                width: 4px;
+                height: 4px;
+                background: linear-gradient(45deg, #ff6b9d, #4facfe);
+                border-radius: 50%;
+                pointer-events: none;
+                z-index: 9999;
+                animation: fadeOut 1s ease-out forwards;
+            `;
+            
+            document.body.appendChild(sparkle);
+            
+            setTimeout(() => {
+                sparkle.remove();
+            }, 1000);
+        }
+
+        function testCursorSparkles() {
+            const count = sparkleCount;
+            setTimeout(() => {
+                alert(`Sparkles created in last test: ${sparkleCount - count}\\n\\nExpected: Mobile = 0, Desktop = Some`);
+            }, 2000);
+        }
+
+        function testConfetti() {
+            const colors = ['#ff6b9d', '#4facfe', '#43e97b'];
+            const confettiAmount = isMobileDevice() ? 15 : 30;
+            
+            for (let i = 0; i < confettiAmount; i++) {
+                createConfetti(colors[i % colors.length]);
+            }
+            
+            confettiCount += confettiAmount;
+            alert(`Created ${confettiAmount} confetti pieces\\n\\nMobile gets 50% less confetti for better performance`);
+        }
+
+        function createConfetti(color) {
+            const confetti = document.createElement('div');
+            confetti.className = 'confetti';
+            confetti.style.left = Math.random() * 100 + '%';
+            confetti.style.backgroundColor = color;
+            confetti.style.animationDuration = (Math.random() * 2 + 1) + 's';
+            
+            document.body.appendChild(confetti);
+            
+            setTimeout(() => {
+                confetti.remove();
+            }, 3000);
+        }
+
+        function testFloatingElements() {
+            const element = document.createElement('div');
+            element.className = 'floating-element';
+            element.style.left = Math.random() * (window.innerWidth - 20) + 'px';
+            element.style.top = Math.random() * (window.innerHeight - 20) + 'px';
+            
+            document.body.appendChild(element);
+            
+            setTimeout(() => {
+                element.remove();
+            }, 8000);
+            
+            alert('Added floating element\\n\\nOn mobile: Smaller, more subtle, slower animations');
+        }
+
+        // Add CSS keyframes for fadeOut
+        const style = document.createElement('style');
+        style.textContent = `
+            @keyframes fadeOut {
+                0% { opacity: 1; transform: scale(1); }
+                100% { opacity: 0; transform: scale(0); }
+            }
+        `;
+        document.head.appendChild(style);
+
+        // Initialize on page load
+        window.addEventListener('load', updateDeviceInfo);
+        window.addEventListener('resize', updateDeviceInfo);
+    </script>
+</body>
+</html>

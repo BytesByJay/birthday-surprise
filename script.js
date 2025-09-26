@@ -133,7 +133,8 @@ function create3DNumber() {
 }
 
 function createParticles() {
-    const particleCount = 100;
+    // Reduce particle count on mobile for better performance
+    const particleCount = isMobileDevice() ? 30 : 100;
     const positions = new Float32Array(particleCount * 3);
     
     for (let i = 0; i < particleCount * 3; i += 3) {
@@ -536,9 +537,14 @@ function triggerConfetti() {
     
     const colors = ['#ff6b9d', '#4facfe', '#43e97b', '#fa709a', '#fee140'];
     
-    for (let i = 0; i < 50; i++) {
+    // Reduce confetti amount on mobile devices
+    const confettiCount = isMobileDevice() ? 25 : 50;
+    
+    for (let i = 0; i < confettiCount; i++) {
         createConfettiPiece(confettiContainer, colors[i % colors.length]);
     }
+    
+    console.log(`🎊 Confetti triggered: ${confettiCount} pieces (Mobile: ${isMobileDevice()})`);
 }
 
 function createConfettiPiece(container, color) {
@@ -729,12 +735,29 @@ style.textContent = sparkleKeyframes;
 document.head.appendChild(style);
 
 // ===== INTERACTIVE ENHANCEMENTS =====
-document.addEventListener('mousemove', function(e) {
-    // Subtle cursor trail effect
-    if (Math.random() > 0.95) {
-        createCursorSparkle(e.clientX, e.clientY);
-    }
-});
+// Mobile and touch device detection
+function isMobileDevice() {
+    return /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) 
+           || (typeof window.orientation !== 'undefined') 
+           || (window.innerWidth <= 768);
+}
+
+function isTouchDevice() {
+    return 'ontouchstart' in window || navigator.maxTouchPoints > 0 || navigator.msMaxTouchPoints > 0;
+}
+
+// Only add cursor sparkles on non-mobile, non-touch devices
+if (!isMobileDevice() && !isTouchDevice()) {
+    document.addEventListener('mousemove', function(e) {
+        // Reduced frequency for better performance - even less sparkles
+        if (Math.random() > 0.97) {
+            createCursorSparkle(e.clientX, e.clientY);
+        }
+    });
+    console.log('✨ Cursor sparkles enabled for desktop');
+} else {
+    console.log('📱 Mobile device detected - cursor sparkles disabled for better experience');
+}
 
 function createCursorSparkle(x, y) {
     const sparkle = document.createElement('div');
