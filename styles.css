@@ -126,6 +126,12 @@ body {
     66% { transform: translateY(15px) rotate(240deg); }
 }
 
+/* Gentler mobile animation */
+@keyframes floatMobile {
+    0%, 100% { transform: translateY(0px) rotate(0deg) scale(0.5); }
+    50% { transform: translateY(-10px) rotate(30deg) scale(0.5); }
+}
+
 .gradient-orbs {
     position: absolute;
     width: 100%;
@@ -737,31 +743,32 @@ body {
         --section-padding: 3rem 0;
     }
     
-    /* Reduce background animations on mobile for better readability */
+    /* Make background animations subtle on mobile for better readability */
     .floating-elements::before,
     .floating-elements::after {
-        opacity: 0.3;
-        animation-duration: 10s; /* Slower animation */
+        opacity: 0.08;
+        animation-duration: 15s; /* Much slower animation */
+        animation-name: floatMobile; /* Use gentler mobile animation */
     }
     
     .floating-elements::before {
-        width: 40px;
-        height: 40px;
-        background: rgba(255, 255, 255, 0.05);
-    }
-    
-    .floating-elements::after {
-        width: 60px;
-        height: 60px;
+        width: 30px;
+        height: 30px;
         background: rgba(255, 255, 255, 0.03);
     }
     
+    .floating-elements::after {
+        width: 40px;
+        height: 40px;
+        background: rgba(255, 255, 255, 0.02);
+    }
+    
     .gradient-orbs::before {
-        width: 150px;
-        height: 150px;
-        opacity: 0.15; /* Much more subtle */
-        filter: blur(80px);
-        animation-duration: 6s; /* Slower pulse */
+        width: 100px;
+        height: 100px;
+        opacity: 0.06; /* Very subtle */
+        filter: blur(50px);
+        animation-duration: 12s; /* Slower pulse */
     }
     
     .nav-container {
@@ -858,16 +865,19 @@ body {
         font-size: 1rem;
     }
     
-    /* Almost disable background animations on very small screens */
+    /* Make background animations very subtle on small screens */
     .floating-elements::before,
     .floating-elements::after {
-        opacity: 0.1;
-        animation-duration: 15s;
+        opacity: 0.04;
+        animation-duration: 20s;
+        transform: scale(0.3); /* Even smaller on tiny screens */
     }
     
     .gradient-orbs::before {
-        opacity: 0.1;
-        animation-duration: 8s;
+        opacity: 0.03;
+        animation-duration: 15s;
+        width: 60px;
+        height: 60px;
     }
 }
 

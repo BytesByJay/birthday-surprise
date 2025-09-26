@@ -185,7 +185,7 @@
 
         function testConfetti() {
             const colors = ['#ff6b9d', '#4facfe', '#43e97b'];
-            const confettiAmount = isMobileDevice() ? 15 : 30;
+            const confettiAmount = isMobileDevice() ? 8 : 30;
             
             for (let i = 0; i < confettiAmount; i++) {
                 createConfetti(colors[i % colors.length]);

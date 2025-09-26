@@ -133,8 +133,8 @@ function create3DNumber() {
 }
 
 function createParticles() {
-    // Reduce particle count on mobile for better performance
-    const particleCount = isMobileDevice() ? 30 : 100;
+    // Reduce particle count significantly on mobile for better performance
+    const particleCount = isMobileDevice() ? 20 : 100;
     const positions = new Float32Array(particleCount * 3);
     
     for (let i = 0; i < particleCount * 3; i += 3) {
@@ -537,8 +537,8 @@ function triggerConfetti() {
     
     const colors = ['#ff6b9d', '#4facfe', '#43e97b', '#fa709a', '#fee140'];
     
-    // Reduce confetti amount on mobile devices
-    const confettiCount = isMobileDevice() ? 25 : 50;
+    // Reduce confetti amount significantly on mobile devices
+    const confettiCount = isMobileDevice() ? 15 : 50;
     
     for (let i = 0; i < confettiCount; i++) {
         createConfettiPiece(confettiContainer, colors[i % colors.length]);
